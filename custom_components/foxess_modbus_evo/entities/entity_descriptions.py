@@ -2475,6 +2475,7 @@ def _bms_entities() -> Iterable[EntityFactory]:
                 holding=[31023], models=Inv.H1_G1 | Inv.H1_LAN | Inv.H1_G2_SET | Inv.KH_PRE133 | Inv.KH_133
             ),
             ModbusAddressesSpec(holding=[31037], models=Inv.H3_SET),
+            ModbusAddressesSpec(holding=[37611], models=Inv.EVO_10_H),
         ],
         bms_cell_temp_high=[
             ModbusAddressesSpec(input=[11043], models=Inv.H1_G1 | Inv.KH_PRE119),
