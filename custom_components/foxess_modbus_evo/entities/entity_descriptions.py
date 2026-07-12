@@ -1576,7 +1576,7 @@ def _inverter_entities() -> Iterable[EntityFactory]:
                 holding=[31019], models=Inv.H1_G1 | Inv.H1_LAN | Inv.H1_G2_SET | Inv.KH_PRE133 | Inv.KH_133
             ),
             ModbusAddressesSpec(holding=[31033], models=Inv.H3_SET),
-            ModbusAddressesSpec(holding=[39142], models=Inv.EVO_10_H),
+            # Note: 39142 is reserved on EVO; battery ambient temp is exposed via BMS1 at 37611
         ],
         name="Ambient Temp",
         device_class=SensorDeviceClass.TEMPERATURE,
@@ -2550,7 +2550,7 @@ def _configuration_entities() -> Iterable[EntityFactory]:
     yield ModbusWorkModeSelectDescription(
         key="work_mode",
         address=[
-            ModbusAddressSpec(holding=49203, models=Inv.H3_PRO_SET | Inv.H3_SMART | Inv.EVO_10_H),
+            ModbusAddressSpec(holding=49203, models=Inv.H3_PRO_SET | Inv.H3_SMART),
         ],
         name="Work Mode",
         options_map={
@@ -2560,6 +2560,30 @@ def _configuration_entities() -> Iterable[EntityFactory]:
             4: "Peak Shaving",
             6: "Force Charge",
             7: "Force Discharge",
+        },
+    )
+
+    # EVO 10: register 49203 uses 1-based values for reads but 0-based for writes
+    yield ModbusWorkModeSelectDescription(
+        key="work_mode",
+        address=[
+            ModbusAddressSpec(holding=49203, models=Inv.EVO_10_H),
+        ],
+        name="Work Mode",
+        options_map={
+            0: "Self Use",  # write-cache alias: visible for ~5s after writing 0 before inverter confirms read-back of 1
+            1: "Self Use",
+            2: "Feed-in First",
+            3: "Back-up",
+            4: "Peak Shaving",
+            6: "Force Charge",
+            7: "Force Discharge",
+        },
+        write_options_map={
+            "Self Use":      0,
+            "Feed-in First": 1,
+            "Back-up":       2,
+            "Peak Shaving":  3,
         },
     )
 
