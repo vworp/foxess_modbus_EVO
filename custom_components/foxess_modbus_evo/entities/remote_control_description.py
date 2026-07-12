@@ -10,6 +10,13 @@ _NORMAL_WORK_MODE_MAP = {
     WorkMode.BACK_UP: 2,
 }
 
+# EVO firmware uses 0-based write values on register 49203 (reads back 1-based)
+_EVO_WORK_MODE_MAP = {
+    WorkMode.SELF_USE: 0,
+    WorkMode.FEED_IN_FIRST: 1,
+    WorkMode.BACK_UP: 2,
+}
+
 REMOTE_CONTROL_DESCRIPTION = ModbusRemoteControlFactory(
     addresses=[
         RemoteControlAddressSpec(
@@ -108,8 +115,6 @@ REMOTE_CONTROL_DESCRIPTION = ModbusRemoteControlFactory(
             models=Inv.H3_SET & ~Inv.KUARA_H3 & ~Inv.AIO_H3_101 & ~Inv.AIO_H3_PRE101,
         ),
         RemoteControlAddressSpec(
-            # The H3 doesn't support anything above 44005, and the active/reactive power regisers are 2 values
-            # The Kuara H3 doesn't support this, see https://github.com/nathanmarlor/foxess_modbus/issues/532
             holding=ModbusRemoteControlAddressConfig(
                 remote_enable=46001,
                 timeout_set=46002,
@@ -127,6 +132,21 @@ REMOTE_CONTROL_DESCRIPTION = ModbusRemoteControlFactory(
                 pv_voltages=[39070, 39072, 39074, 39076, 39078, 39080],
             ),
             models=Inv.H3_PRO_SET | Inv.H3_SMART,
+        ),
+        RemoteControlAddressSpec(
+            holding=ModbusRemoteControlAddressConfig(
+                remote_enable=46001,
+                timeout_set=46002,
+                active_power=[46004, 46003],
+                work_mode=49203,
+                work_mode_map=_EVO_WORK_MODE_MAP,
+                max_soc=46610,
+                invbatpower=[39238, 39237],
+                battery_soc=[39423],
+                pwr_limit_bat_up=[46019, 46018],
+                pv_voltages=[39070, 39072, 39074],
+            ),
+            models=Inv.EVO_10_H,
         ),
     ]
 )
