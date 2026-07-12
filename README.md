@@ -8,6 +8,7 @@
 ## About
 
 This is a fork of (https://github.com/AdamNewberry/foxess_modbus_EVO) which is a fork of [nathanmarlor/foxess_modbus](https://github.com/nathanmarlor/foxess_modbus) — a Home Assistant custom component for communicating with FoxESS inverters locally via Modbus, without relying on FoxESS's cloud.
+
 This fork has been explicitely modified for a FoxESS EVO 10-5-H with firmware INV_Master 1.18 & INV_Manager 1.14
 
 This fork adds support for the **FoxESS EVO** series of inverters, which are not yet supported upstream.
