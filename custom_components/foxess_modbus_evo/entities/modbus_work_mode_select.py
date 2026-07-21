@@ -40,6 +40,15 @@ class ModbusWorkModeSelect(ModbusSelect):
         if controller.remote_control_manager is not None:
             self._attr_options.extend([_FORCE_CHARGE, _FORCE_DISCHARGE])
 
+        # Deduplicate while preserving order (FC/FD may already be in options_map)
+        seen: set[str] = set()
+        deduped: list[str] = []
+        for v in self._attr_options:
+            if v not in seen:
+                seen.add(v)
+                deduped.append(v)
+        self._attr_options = deduped
+
     @property
     def current_option(self) -> str | None:
         if self._controller.remote_control_manager is not None:
